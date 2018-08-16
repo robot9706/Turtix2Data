@@ -21,7 +21,7 @@ There are 2 JPGs, one stores color data, the other stores alpha in a grayscale f
 
 The third file stores tileset information, cell IDs, locations and sizes.
 
-##Patches
+## Patches
 The "Patches" folder contains x64dbg patch files, which can be applied to "Turtix.exe".
 - **windowed720p.1337**: Makes the game run in a window in 1280x720.
 - **fullscreen1080p.1337**: Makes the game run in fullscreen 1920x1080.
