@@ -44,6 +44,9 @@ namespace SoundPacker
 
 					Unpack(args[1], dir);
 					break;
+
+				default:
+					throw new Exception("Unknown mode!");
 			}
 		}
 

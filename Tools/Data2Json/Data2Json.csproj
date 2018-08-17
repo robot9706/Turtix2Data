@@ -4,15 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B912E0A8-B607-44D8-A08F-DA3193C99B9E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataIex</RootNamespace>
-    <AssemblyName>DataIex</AssemblyName>
+    <ProjectGuid>{769E7279-534B-4DF7-9647-C4FE65F3FC6B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Data2Json</RootNamespace>
+    <AssemblyName>Data2Json</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +22,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,25 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\CollisionData.cs" />
-    <Compile Include="Data\CursorData.cs" />
-    <Compile Include="DataIEX.cs" />
-    <Compile Include="DataIEX_old.cs" />
-    <Compile Include="Data\TileDataWrapper.cs" />
-    <Compile Include="Ext.cs" />
-    <Compile Include="Data\FontData.cs" />
-    <Compile Include="Data\GameAction.cs" />
-    <Compile Include="Data\GameFunction.cs" />
-    <Compile Include="Data\GUIData.cs" />
-    <Compile Include="Data\LevelData.cs" />
-    <Compile Include="Data\Lookup.cs" />
-    <Compile Include="Data\ObjectData.cs" />
-    <Compile Include="Data\ParticleData.cs" />
-    <Compile Include="IEXEntry.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\SoundData.cs" />
-    <Compile Include="Data\TileData.cs" />
-    <Compile Include="Vec2.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataIex\DataIex.csproj">
+      <Project>{b912e0a8-b607-44d8-a08f-da3193c99b9e}</Project>
+      <Name>DataIex</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

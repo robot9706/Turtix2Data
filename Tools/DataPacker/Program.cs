@@ -48,7 +48,10 @@ namespace DataPacker
 
 						Unpack(args[1], dir);
 						break;
-				}
+
+				default:
+					throw new Exception("Unknown mode!");
+			}
 #if !DEBUG
 			}
 			catch (Exception ex)
