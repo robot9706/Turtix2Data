@@ -9,42 +9,96 @@ namespace DataIex
 {
 	public class CursorData
 	{
+		public uint UnknownUInt1;
+		public uint UnknownUInt2;
+
 		public int GraphicsIndex;
+
+		public float ColorRed;
+		public float ColorGreen;
+		public float ColorBlue;
+		public float ColorAlpha;
+
+		public uint[] GraphicsTileIndexArray;
+
+		public uint AnimationSpeed;
+
+		public byte IsLooping;
+		public byte UnknownByte2;
+
+		public uint OffsetX;
+		public uint OffsetY;
+
+		public uint Width;
+		public uint Height;
+
+		public uint UnknownUInt8;
 
 		public static CursorData Read(BinaryReader reader)
 		{
-			uint dn1 = reader.ReadUInt32();
-			uint dn2 = reader.ReadUInt32();
+			CursorData cursor = new CursorData();
 
-			uint graphicsIndex = reader.ReadUInt32();
+			cursor.UnknownUInt1 = reader.ReadUInt32();
+			cursor.UnknownUInt2 = reader.ReadUInt32();
 
-			float f0 = reader.ReadSingle();
-			float f1 = reader.ReadSingle();
-			float f2 = reader.ReadSingle();
-			float f3 = reader.ReadSingle();
+			cursor.GraphicsIndex = (int)reader.ReadUInt32();
 
-			uint dn3 = reader.ReadUInt32();
-			for (int rdix = 0; rdix < dn3; rdix++)
+			cursor.ColorRed = reader.ReadSingle();
+			cursor.ColorGreen = reader.ReadSingle();
+			cursor.ColorBlue = reader.ReadSingle();
+			cursor.ColorAlpha = reader.ReadSingle();
+
+			uint unknownLength = reader.ReadUInt32();
+			cursor.GraphicsTileIndexArray = new uint[unknownLength];
+			for (int x = 0; x < unknownLength; x++)
 			{
-				uint dn4 = reader.ReadUInt32();
+				cursor.GraphicsTileIndexArray[x] = reader.ReadUInt32();
 			}
 
-			uint dn5 = reader.ReadUInt32(); //Converted to float
+			cursor.AnimationSpeed = reader.ReadUInt32(); //Converted to float
 
-			byte db1 = reader.ReadByte();
-			byte db2 = reader.ReadByte();
+			cursor.IsLooping = reader.ReadByte();
+			cursor.UnknownByte2 = reader.ReadByte();
 
-			uint dn6 = reader.ReadUInt32();
-			uint dn7 = reader.ReadUInt32();
-			uint dn8 = reader.ReadUInt32();
-			uint dn9 = reader.ReadUInt32();
+			cursor.OffsetX = reader.ReadUInt32();
+			cursor.OffsetY = reader.ReadUInt32();
+			cursor.Width = reader.ReadUInt32();
+			cursor.Height = reader.ReadUInt32();
 
-			uint dn10 = reader.ReadUInt32();
+			cursor.UnknownUInt8 = reader.ReadUInt32();
 
-			return new CursorData()
+			return cursor;
+		}
+
+		public static void Write(CursorData cursor, BinaryWriter writer)
+		{
+			writer.Write(cursor.UnknownUInt1);
+			writer.Write(cursor.UnknownUInt2);
+
+			writer.Write(cursor.GraphicsIndex);
+
+			writer.Write(cursor.ColorRed);
+			writer.Write(cursor.ColorGreen);
+			writer.Write(cursor.ColorBlue);
+			writer.Write(cursor.ColorAlpha);
+
+			writer.Write((uint)cursor.GraphicsTileIndexArray.Length);
+			for (int x = 0; x < cursor.GraphicsTileIndexArray.Length; x++)
 			{
-				GraphicsIndex = (int)graphicsIndex
-			};
+				writer.Write(cursor.GraphicsTileIndexArray[x]);
+			}
+
+			writer.Write(cursor.AnimationSpeed);
+
+			writer.Write(cursor.IsLooping);
+			writer.Write(cursor.UnknownByte2);
+
+			writer.Write(cursor.OffsetX);
+			writer.Write(cursor.OffsetY);
+			writer.Write(cursor.Width);
+			writer.Write(cursor.Height);
+
+			writer.Write(cursor.UnknownUInt8);
 		}
 	}
 }

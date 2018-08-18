@@ -9,101 +9,204 @@ namespace DataIex
 {
 	public class TileData
 	{
-		public long FileOffset;
+		public uint Type;
 
-		public string Type;
+		public TileDataInternal Data;
 
-		public int GraphicsIndex;
+		public abstract class TileDataInternal
+		{
+			public abstract void Read(BinaryReader reader);
+			public abstract void Write(BinaryWriter writer);
+		}
 
-		public uint[] AnimationFrames;
+		public class DataType0 : TileDataInternal
+		{
+			public string Name;
+
+			public uint GraphicsIndex;
+
+			public uint GraphicsTileIndex;
+
+			public byte FlipX;
+			public byte FlipY;
+
+			public override void Read(BinaryReader reader)
+			{
+				Name = reader.ReadTString();
+
+				GraphicsIndex = reader.ReadUInt32();
+
+				GraphicsTileIndex = reader.ReadUInt32();
+
+				FlipX = reader.ReadByte();
+				FlipY = reader.ReadByte();
+			}
+
+			public override void Write(BinaryWriter writer)
+			{
+				writer.WriteTString(Name);
+
+				writer.Write(GraphicsIndex);
+
+				writer.Write(GraphicsTileIndex);
+
+				writer.Write(FlipX);
+				writer.Write(FlipY);
+			}
+		}
+
+		public class DataType1 : TileDataInternal
+		{
+			public string Name;
+
+			public uint GraphicsIndex;
+
+			public uint[] AnimationFrames;
+
+			public uint AnimationSpeed;
+
+			public byte IsLoopingAnimation;
+			public byte UnknownByte2;
+
+			public byte FlipX;
+			public byte FlipY;
+
+			public uint UnknownUInt2;
+
+			public override void Read(BinaryReader reader)
+			{
+				Name = reader.ReadTString();
+
+				GraphicsIndex = reader.ReadUInt32();
+
+				uint frameCount = reader.ReadUInt32();
+				AnimationFrames = new uint[frameCount];
+				for (uint x = 0; x < frameCount; x++)
+				{
+					AnimationFrames[x] = reader.ReadUInt32();
+				}
+
+				AnimationSpeed = reader.ReadUInt32(); //Converted to float divided by / 100
+
+				IsLoopingAnimation = reader.ReadByte();
+				UnknownByte2 = reader.ReadByte();
+
+				FlipX = reader.ReadByte();
+				FlipY = reader.ReadByte();
+
+				UnknownUInt2 = reader.ReadUInt32();
+			}
+
+			public override void Write(BinaryWriter writer)
+			{
+				writer.WriteTString(Name);
+
+				writer.Write(GraphicsIndex);
+
+				writer.Write((uint)AnimationFrames.Length);
+				for (int x = 0; x < AnimationFrames.Length; x++)
+				{
+					writer.Write((uint)AnimationFrames[x]);
+				}
+
+				writer.Write(AnimationSpeed);
+
+				writer.Write(IsLoopingAnimation);
+				writer.Write(UnknownByte2);
+
+				writer.Write(FlipX);
+				writer.Write(FlipY);
+
+				writer.Write(UnknownUInt2);
+			}
+		}
+
+		/// <summary>
+		/// Game does not seem to contain this type.
+		/// </summary>
+		public class DataType2 : TileDataInternal
+		{
+			public string Name;
+
+			public uint GraphicsIndex;
+
+			public uint UnknownUInt1;
+
+			public byte UnknownByte1;
+			public byte UnknownByte2;
+
+			public uint UnknownUInt2;
+			public uint UnknownUInt3;
+			public uint UnknownUInt4;
+			public uint UnknownUInt5;
+
+			public override void Read(BinaryReader reader)
+			{
+				Name = reader.ReadTString();
+
+				GraphicsIndex = reader.ReadUInt32();
+
+				UnknownUInt1 = reader.ReadUInt32();
+
+				UnknownByte1 = reader.ReadByte();
+				UnknownByte2 = reader.ReadByte();
+
+				UnknownUInt2 = reader.ReadUInt32();
+				UnknownUInt3 = reader.ReadUInt32();
+				UnknownUInt4 = reader.ReadUInt32();
+				UnknownUInt5 = reader.ReadUInt32();
+			}
+
+			public override void Write(BinaryWriter writer)
+			{
+				writer.WriteTString(Name);
+
+				writer.Write(GraphicsIndex);
+
+				writer.Write(UnknownUInt1);
+
+				writer.Write(UnknownByte1);
+				writer.Write(UnknownByte2);
+
+				writer.Write(UnknownUInt2);
+				writer.Write(UnknownUInt3);
+				writer.Write(UnknownUInt4);
+				writer.Write(UnknownUInt5);
+			}
+		}
 
 		public static TileData Read(BinaryReader reader)
 		{
-			long ofs = reader.BaseStream.Position - 1;
+			TileData tile = new TileData();
 
-			uint flag = reader.ReadUInt32(); //?
+			tile.Type = reader.ReadUInt32(); //?
 
-			if (flag == 0) //Static?
+			switch (tile.Type)
 			{
-				string type = reader.ReadTString();
+				case 0:
+					tile.Data = new DataType0();
+					break;
+				case 1:
+					tile.Data = new DataType1();
+					break;
+				case 2:
+					tile.Data = new DataType2();
+					break;
 
-				uint graphics = reader.ReadUInt32();
-
-				uint dn = reader.ReadUInt32();
-
-				byte db1 = reader.ReadByte();
-				byte db2 = reader.ReadByte();
-
-				return new TileData()
-				{
-					Type = type,
-					GraphicsIndex = (int)graphics,
-
-					FileOffset = ofs
-				};
+				default:
+					throw new Exception("Unknown tile type: " + tile.Type.ToString());
 			}
-			else if (flag == 1) //Animated?
-			{
-				string type = reader.ReadTString();
 
-				uint graphics = reader.ReadUInt32();
+			tile.Data.Read(reader);
 
-				uint frameCount = reader.ReadUInt32();
+			return tile;
+		}
 
-				uint[] frames = new uint[frameCount];
+		public static void Write(TileData data, BinaryWriter writer)
+		{
+			writer.Write(data.Type);
 
-				for (uint x = 0; x < frameCount; x++)
-				{
-					frames[x] = reader.ReadUInt32();
-				}
-
-				uint dn = reader.ReadUInt32(); //Converted to float divided by / 100
-
-				byte db1 = reader.ReadByte();
-				byte db2 = reader.ReadByte();
-
-				//?????????????
-
-				byte db3 = reader.ReadByte();
-				byte db4 = reader.ReadByte();
-
-				uint dn2 = reader.ReadUInt32();
-
-				return new TileData()
-				{
-					Type = type,
-					GraphicsIndex = (int)graphics,
-					AnimationFrames = frames,
-
-					FileOffset = ofs,
-				};
-			}
-			else if (flag == 2)
-			{
-				string type = reader.ReadTString();
-
-				uint graphics = reader.ReadUInt32();
-
-				uint i1 = reader.ReadUInt32();
-
-				byte b1 = reader.ReadByte();
-				byte b2 = reader.ReadByte();
-
-				uint i2 = reader.ReadUInt32();
-				uint i3 = reader.ReadUInt32();
-				uint i4 = reader.ReadUInt32();
-				uint i5 = reader.ReadUInt32();
-
-				return new TileData()
-				{
-					Type = type,
-					GraphicsIndex = (int)graphics
-				};
-			}
-			else
-			{
-				throw new Exception("Unknown tile type");
-			}
+			data.Data.Write(writer);
 		}
 	}
 }

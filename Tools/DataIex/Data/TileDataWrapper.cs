@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataIex.Data
+namespace DataIex
 {
 	public class TileDataWrapper
 	{
-		public static TileData Read(BinaryReader reader)
+		public TileData Tile;
+
+		public static TileDataWrapper Read(BinaryReader reader)
 		{
 			uint magicHeader = reader.ReadUInt32();
 			if (magicHeader != 0x01)
@@ -17,14 +19,17 @@ namespace DataIex.Data
 				throw new Exception("Unexpected tile header!");
 			}
 
-			return TileData.Read(reader);
+			TileDataWrapper wrapper = new TileDataWrapper();
+			wrapper.Tile = TileData.Read(reader);
+
+			return wrapper;
 		}
 
-		public static void Write(TileData data, BinaryWriter writer)
+		public static void Write(TileDataWrapper data, BinaryWriter writer)
 		{
 			writer.Write(0x01);
-			
-			//TileData.Write(reader);
+
+			TileData.Write(data.Tile, writer);
 		}
 	}
 }

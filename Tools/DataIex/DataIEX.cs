@@ -241,7 +241,7 @@ namespace DataIex
 		{
 			JumpToEntry(entry);
 
-			SoundData data = new SoundData(_reader.ReadBytes(entry.Length));
+			SoundData data = SoundData.Read(_reader);
 
 			CheckFilePosition(entry);
 

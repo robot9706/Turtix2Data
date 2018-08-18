@@ -24,14 +24,19 @@ namespace Data2Json
 			GUI
 		}
 
+		private static JsonSerializerSettings JSONSettings = new JsonSerializerSettings()
+		{
+			TypeNameHandling = TypeNameHandling.Objects
+		};
+
 		private static Dictionary<ContentType, Type> _typeLookup = new Dictionary<ContentType, Type>()
 		{
-			// { ContentType.Sound, typeof(SoundData) },
+			{ ContentType.Sound, typeof(SoundData) },
 			{ ContentType.Font, typeof(FontData) },
-			//{ ContentType.Cursor, typeof(CursorData) },
-			//{ ContentType.Tile, typeof(TileDataWrapper) },
+			{ ContentType.Cursor, typeof(CursorData) },
+			{ ContentType.Tile, typeof(TileDataWrapper) },
 			//{ ContentType.Object, typeof(ObjectData) },
-			//{ ContentType.Collision, typeof(CollisionData) },
+			{ ContentType.Collision, typeof(CollisionData) },
 			//{ ContentType.Particle, typeof(ParticleData) },
 			//{ ContentType.Level, typeof(LevelData) },
 			//{ ContentType.GUI, typeof(GUIData) },
@@ -148,7 +153,7 @@ namespace Data2Json
 
 			string json = File.ReadAllText(jsonFile);
 
-			object data = JsonConvert.DeserializeObject(json, serializeType);
+			object data = JsonConvert.DeserializeObject(json, serializeType, JSONSettings);
 
 			WriteContentType(outFile, data, serializeType);
 		}
@@ -158,7 +163,7 @@ namespace Data2Json
 			MethodInfo method = type.GetMethod("Write", BindingFlags.Static | BindingFlags.Public);
 			if (method == null)
 			{
-				throw new Exception("No static Read method found for " + type.FullName);
+				throw new Exception("No static Write method found for " + type.FullName);
 			}
 
 			using (FileStream fileStream = new FileStream(file, FileMode.Create))
@@ -189,7 +194,7 @@ namespace Data2Json
 				throw new Exception("Failed to read data!");
 			}
 
-			string json = JsonConvert.SerializeObject(data, Formatting.Indented);
+			string json = JsonConvert.SerializeObject(data, Formatting.Indented, JSONSettings);
 
 			File.WriteAllText(outFile, json);
 		}
