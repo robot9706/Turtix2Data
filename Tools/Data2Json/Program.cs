@@ -24,9 +24,14 @@ namespace Data2Json
 			GUI
 		}
 
-		private static JsonSerializerSettings JSONSettings = new JsonSerializerSettings()
+		private static JsonSerializerSettings JSONSettingsFullTypeNames = new JsonSerializerSettings()
 		{
 			TypeNameHandling = TypeNameHandling.Objects
+		};
+
+		private static JsonSerializerSettings JSONSettingsNoTypeNames = new JsonSerializerSettings()
+		{
+			TypeNameHandling = TypeNameHandling.None
 		};
 
 		private static Dictionary<ContentType, Type> _typeLookup = new Dictionary<ContentType, Type>()
@@ -37,9 +42,14 @@ namespace Data2Json
 			{ ContentType.Tile, typeof(TileDataWrapper) },
 			//{ ContentType.Object, typeof(ObjectData) },
 			{ ContentType.Collision, typeof(CollisionData) },
-			//{ ContentType.Particle, typeof(ParticleData) },
+			{ ContentType.Particle, typeof(ParticleData) },
 			//{ ContentType.Level, typeof(LevelData) },
 			//{ ContentType.GUI, typeof(GUIData) },
+		};
+
+		private static List<ContentType> _hasAbstractData = new List<ContentType>()
+		{
+			ContentType.Tile
 		};
 
 		static void Main(string[] args)
@@ -153,7 +163,9 @@ namespace Data2Json
 
 			string json = File.ReadAllText(jsonFile);
 
-			object data = JsonConvert.DeserializeObject(json, serializeType, JSONSettings);
+			bool hasAbstractData = _hasAbstractData.Contains(type);
+
+			object data = JsonConvert.DeserializeObject(json, serializeType, (hasAbstractData ? JSONSettingsFullTypeNames : JSONSettingsNoTypeNames));
 
 			WriteContentType(outFile, data, serializeType);
 		}
@@ -194,7 +206,9 @@ namespace Data2Json
 				throw new Exception("Failed to read data!");
 			}
 
-			string json = JsonConvert.SerializeObject(data, Formatting.Indented, JSONSettings);
+			bool hasAbstractData = _hasAbstractData.Contains(type);
+
+			string json = JsonConvert.SerializeObject(data, Formatting.Indented, (hasAbstractData ? JSONSettingsFullTypeNames : JSONSettingsNoTypeNames));
 
 			File.WriteAllText(outFile, json);
 		}

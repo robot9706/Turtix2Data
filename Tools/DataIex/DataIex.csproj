@@ -58,7 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SoundData.cs" />
     <Compile Include="Data\TileData.cs" />
-    <Compile Include="Vec2.cs" />
+    <Compile Include="ParticleParam.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

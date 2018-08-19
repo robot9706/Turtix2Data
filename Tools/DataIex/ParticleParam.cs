@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace DataIex
 {
-	public struct Vec2
+	public struct ParticleParam
 	{
-		public float X;
-		public float Y;
+		public float Time;
+		public float Value;
 
-		public Vec2(float x, float y)
+		public ParticleParam(float t, float v)
 		{
-			X = x;
-			Y = y;
+			Time = t;
+			Value = v;
 		}
 	}
 }
